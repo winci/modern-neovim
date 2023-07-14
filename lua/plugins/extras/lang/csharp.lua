@@ -1,3 +1,13 @@
+function on_attach(on_attach)
+  vim.api.nvim_create_autocmd("LspAttach", {
+    callback = function(args)
+      local bufnr = args.buf
+      local client = vim.lsp.get_client_by_id(args.data.client_id)
+      on_attach(client, bufnr)
+    end,
+  })
+end
+
 return {
   {
     "nvim-treesitter/nvim-treesitter",
@@ -23,8 +33,9 @@ return {
       },
       setup = {
         omnisharp = function()
-          local lsp_utils = require "base.lsp.utils"
-          lsp_utils.on_attach(function(client, bufnr)
+          on_attach(function(client, bufnr)
+            -- local lsp_utils = require "base.lsp.utils"
+            -- lsp_utils.on_attach(function(client, bufnr)
             if client.name == "omnisharp" then
               local map = function(mode, lhs, rhs, desc)
                 if desc then
